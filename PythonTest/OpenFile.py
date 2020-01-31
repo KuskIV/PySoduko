@@ -8,13 +8,13 @@ def arr_to_soduko(arr):
     soduko = np.zeros((line_size, line_size))
 
     for n in range(0, len(arr) - 1):
-        if not n is "": 
+        if n != "":
             soduko[math.floor(n / line_size)][n % line_size] = arr[n]
     return soduko
 
 
 def return_soduko_from_file(sName):
-    f = open(f"PythonTest/SodukoFiles/{sName}.txt", "r")
+    f = open(f"SodukoFiles/sOne.txt", "r")
     content = f.read()
     f.close()
     arr = content.split(" ")

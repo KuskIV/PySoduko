@@ -1,4 +1,3 @@
-
 from SodukoClass import Soduko
 import MakeTestSoduko as ms
 import Line_length as ll
