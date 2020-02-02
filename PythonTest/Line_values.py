@@ -43,11 +43,11 @@ def square(rel_pos, pos, soduko, I_start, I_end):
     return square
 
 def zero_right_line(right, soduko):
-    line = right_line(right, soduko, 0, len(soduko.S) - 1)
+    line = right_line(right, soduko, 0, len(soduko.S))
     return remove_values_from_list(line, 0)
 
 def zero_down_line(down, soduko):
-    line = down_line(down, soduko, 0, len(soduko.S) -1 )
+    line = down_line(down, soduko, 0, len(soduko.S))
     return remove_values_from_list(line, 0)
 
 def zero_square(rel_pos, pos, soduko):

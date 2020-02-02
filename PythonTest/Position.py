@@ -31,9 +31,6 @@ def list_of_positions(posXY, soduko):
     result.append(lv.right_line(posXY[1], soduko, 0, len(soduko.S))) 
     result.append(lv.down_line(posXY[0], soduko, 0, len(soduko.S)))
     result.append(lv.square(currentPos, posXY, soduko, 0, len(soduko.S)))
-    #result = listx + listy + np.ravel(listsq)
-    #result = list(dict.fromkeys(result))
-    #result = Position.get_reverse(result, len(soduko.S))
     return result
 
 
