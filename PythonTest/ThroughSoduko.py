@@ -6,46 +6,14 @@ import SodukoClass
 import OpenFile as of
 import enum_val as e_val
 from MakeTestSoduko import Soduko_func as s_func
-
-def print_dict(soduko):
-    for x in soduko.pos_val:
-        print(soduko.pos_val[x])
-
-def update_rigt_arr(soduko):
-    key = e_val.Direction.Right
-    for n in range(0, len(soduko.S)):
-        soduko.pos_val[key].append(lv.zero_right_line(n, soduko))
-
-
-def update_down_arr(soduko):
-    key = e_val.Direction.Down
-    for n in range(0, len(soduko.S)):
-        soduko.pos_val[key].append(lv.zero_down_line(n, soduko))
-
-
-def update_square_arr(soduko):
-    key = e_val.Direction.Square
-    sq = soduko.squareSize
-    for n in range(0, sq):
-        for p in range(0, sq):
-            pos = ((p % sq) * sq, (n % sq) * sq)
-            rel = (0,0)
-            soduko.pos_val[key].append(lv.zero_square(rel, pos, soduko))
-
-
-def setup_dict(soduko):
-    soduko.pos_val = {
-        e_val.Direction.Down : [],
-        e_val.Direction.Right : [],
-        e_val.Direction.Square : []
-    }
+import update_soduko as us
 
 
 def first_run(soduko):
-    setup_dict(soduko)
-    update_rigt_arr(soduko)
-    update_down_arr(soduko)
-    update_square_arr(soduko)
+    us.setup_dict(soduko)
+    us.update_rigt_arr(soduko)
+    us.update_down_arr(soduko)
+    us.update_square_arr(soduko)
 
 
 
@@ -63,8 +31,9 @@ def try_down(soduko, down, right):
     pos_list = ll.get_empty_pos_down(soduko, down, right)
     exclude_list = []
     for pos in pos_list:
+        #this does not work. get list from a point
         exclude_list.append(soduko.pos_val.get(e_val.Direction.Down)[pos[1]])
-    print(exclude_list)
+    print(f"down : {exclude_list}")
 
 def try_righ(soduko, down, right):
     return False
@@ -81,6 +50,9 @@ def solve_for_pos(soduko, down, right):
         return True
     return False
 
+
+def done(length, n, pos):
+    return n > length and pos > length ** 2
 
 def solve_soduko(soduko, n, pos):
     down = math.floor(pos / len(soduko.S))
@@ -114,7 +86,7 @@ txt_soduko = of.return_soduko_from_file("sOne")
 soduko = SodukoClass.Soduko(txt_soduko)
 
 first_run(soduko)
-second_run(soduko)
-get_empty_pos(soduko, 0, 0, 0)
+#second_run(soduko)
+solve_for_pos(soduko, 0, 0)
 s_func.Print(soduko)
 print("done")
