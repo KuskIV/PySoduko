@@ -14,7 +14,7 @@ def arr_to_soduko(arr):
 
 
 def return_soduko_from_file(sName):
-    f = open(f"SodukoFiles/sOne.txt", "r")
+    f = open(f"PythonTest/SodukoFiles/{sName}.txt", "r")
     content = f.read()
     f.close()
     arr = content.split(" ")

@@ -2,37 +2,51 @@ import Position as po
 import Line_values as lv
 import math
 import Line_length as ll
+import SodukoClass
+import OpenFile as of
+import enum_val as e_val
+from MakeTestSoduko import Soduko_func as s_func
 
+def print_dict(soduko):
+    for x in soduko.pos_val:
+        print(soduko.pos_val[x])
 
 def update_rigt_arr(soduko):
-    del soduko.right_arr[:]
+    key = e_val.Direction.Right
     for n in range(0, len(soduko.S)):
-        soduko.right_arr.append(lv.zero_right_line(n, soduko))  
-    soduko.right_arr.sort(key = len)
+        soduko.pos_val[key].append(lv.zero_right_line(n, soduko))
 
 
 def update_down_arr(soduko):
-    del soduko.down_arr[:]
+    key = e_val.Direction.Down
     for n in range(0, len(soduko.S)):
-        soduko.down_arr.append(lv.zero_down_line(n, soduko))
-    soduko.down_arr.sort(key = len)
+        soduko.pos_val[key].append(lv.zero_down_line(n, soduko))
 
 
 def update_square_arr(soduko):
-    del soduko.squares_arr[:]
+    key = e_val.Direction.Square
     sq = soduko.squareSize
     for n in range(0, sq):
         for p in range(0, sq):
             pos = ((p % sq) * sq, (n % sq) * sq)
             rel = (0,0)
-            soduko.squares_arr.append(lv.zero_square(rel, pos, soduko))
-    soduko.squares_arr.sort(key = len)
+            soduko.pos_val[key].append(lv.zero_square(rel, pos, soduko))
+
+
+def setup_dict(soduko):
+    soduko.pos_val = {
+        e_val.Direction.Down : [],
+        e_val.Direction.Right : [],
+        e_val.Direction.Square : []
+    }
 
 
 def first_run(soduko):
+    setup_dict(soduko)
     update_rigt_arr(soduko)
     update_down_arr(soduko)
     update_square_arr(soduko)
+
 
 
 def check_one(num_list, n, max_size, s_index):
@@ -42,56 +56,65 @@ def check_one(num_list, n, max_size, s_index):
     return None, 0
 
 
-def find(test_arr, soduko, n, s_index):
-    Lres = []
-    Ires = 0
-    size = len(soduko.S)
-
-    if n >= size:
-        return False
-    Lres, Ires = check_one(test_arr, n, size, s_index)
-    if not Lres is None:
-        return find(test_arr, soduko, n, Ires + 1)
-    else:
-        return find(test_arr, soduko, n + 1, 0)
-
-
-def solve_position(soduko, n, down, right):
-    print(f"{soduko.S[down][right]}, n = {n}")
-
-
-def possible_matche(down, right, soduko, n):
-    posXY = [down, right]
+def possible_matche(down, right, soduko):
     return soduko.S[down][right] == 0
-    #return soduko.S[down][right] == 0 and n in po.all_lengt_of_positions(posXY, soduko)
+    
+def try_down(soduko, down, right):
+    pos_list = ll.get_empty_pos_down(soduko, down, right)
+    exclude_list = []
+    for pos in pos_list:
+        exclude_list.append(soduko.pos_val.get(e_val.Direction.Down)[pos[1]])
+    print(exclude_list)
 
+def try_righ(soduko, down, right):
+    return False
 
-def set_n(n):
-    return n - 1 if n - 1 >= 1 else 1
+def try_square(soduko, down, right):
+    return False
+
+def solve_for_pos(soduko, down, right):
+    if try_down(soduko, down, right):
+        return True
+    elif try_righ(soduko, down, right):
+        return True
+    elif try_square(soduko, down, right):
+        return True
+    return False
 
 
 def solve_soduko(soduko, n, pos):
     down = math.floor(pos / len(soduko.S))
     right = pos % len(soduko.S)
+    limit_size = len(soduko.S) ** 2
     
-    print(f"n = {n}, pos = {pos}, { len(soduko.S) ** 2 - 1}")
-    if (pos >= len(soduko.S) ** 2 and n >= len(soduko.S)) or n >= len(soduko.S):
-        #solve_position(soduko, n, down, right)
+    if done(len(soduko.S), n, pos):
+        # If n has reached the limit, and all positions have been gone through
+        # should be done, return true
         return True
-    elif pos >= len(soduko.S) ** 2:
-        print("All fields has been gone through")
-        return True
-    elif possible_matche(down, right, soduko, n):
-        return solve_soduko(soduko, n, pos + 1)
-    elif pos < len(soduko.S) ** 2 - 1:
+    elif pos >= limit_size:
+        # If all positions has been gone through for one n
+        # cound n up and reset pos
+        return solve_soduko(soduko, n + 1, 0)
+    elif possible_matche(down, right, soduko):
+        # If the positions is not 0 try and find a solution
+        if solve_for_pos(soduko, down, right):
+            # If a solution is found, reset the position
+            return solve_soduko(soduko, n, 0)
+        #if a solution is not found, continue
         return solve_soduko(soduko, n, pos + 1)
     else:
-        return solve_soduko(soduko, n + 1, 0)
+        #If the number in pos is not 0, keep goint
+        return solve_soduko(soduko, n, pos + 1)
 
 
-def second_run(soduko, n):
-    return solve_soduko(soduko, n, 0)
-    #find(soduko.down_arr, soduko, n, 0)
-    #find(soduko.right_arr, soduko, n, 0)
-    #find(soduko.squares_arr, soduko, n, 0)
+def second_run(soduko):
+    return solve_soduko(soduko, 1, 0)
 
+txt_soduko = of.return_soduko_from_file("sOne")
+soduko = SodukoClass.Soduko(txt_soduko)
+
+first_run(soduko)
+second_run(soduko)
+get_empty_pos(soduko, 0, 0, 0)
+s_func.Print(soduko)
+print("done")

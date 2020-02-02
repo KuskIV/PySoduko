@@ -1,5 +1,4 @@
 import numpy as np
-#from SodukoClass import Soduko
 import SodukoClass
 
 class Soduko_func(object):

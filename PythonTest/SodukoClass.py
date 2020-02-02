@@ -21,6 +21,7 @@ class Soduko:
         self.squareSize = int(math.sqrt(len(soduko)))
         self.number_size = len(str(len(self.S)))
         self.bottom_line = Soduko.make_line(self)
+        self.pos_val = {}
         self.squares_arr = []
         self.down_arr = []
         self.right_arr = []
