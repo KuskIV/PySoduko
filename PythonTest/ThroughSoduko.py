@@ -72,13 +72,13 @@ def check_viable_list(down, right, soduko, viable_list):
         return True
     return False
 
-def check_excluded_list(down, right, soduko, pos_list, viable_list):
+def check_excluded_list(down, right, soduko, pos_list, viable_list, dir):
     exclude_list = []
     for pos in pos_list:
         exclude_list.append(revert_val_for_pos(pos[0], pos[1], soduko))
     exclude_list = two_dim_to_unique(exclude_list)
     exclude_list = revert_list(exclude_list, soduko)
-    exclude_list = remove_exiting_objects(exclude_list, soduko.pos_val[e_val.Direction.Down][right])
+    exclude_list = remove_exiting_objects(exclude_list, soduko.pos_val[dir][right])
     if len(exclude_list) is 1:
         if exclude_list[0] in viable_list:
             soduko.S[down][right] = exclude_list[0]
@@ -92,7 +92,7 @@ def try_down(soduko, down, right, n):
         viable_list = get_values_for_pos(down, right, soduko)
         if check_viable_list(down, right, soduko, viable_list):
             return True
-        if check_excluded_list(down, right, soduko, pos_list, viable_list):
+        if check_excluded_list(down, right, soduko, pos_list, viable_list, e_val.Direction.Down):
             return True
     return False
 
@@ -106,30 +106,10 @@ def remove_exiting_objects(input_list, check_list):
 def try_right(soduko, down, right, n):
     if len(soduko.S) - len(soduko.pos_val[e_val.Direction.Right][down]) <= n:
         pos_list = ll.get_empty_pos_right(soduko, down, right)
-        viable_list = []
-        exclude_list = []
         viable_list = get_values_for_pos(down, right, soduko)
-        viable_list = revert_list(viable_list, soduko)
-        if len(viable_list) is 1:
-            #print("---------------------------")
-            #print(f"RIGHT: pos: {down}:{right}, n = {n}")
-            #print(f"viable list {viable_list}")
-            #print("---------------------------")
-            soduko.S[down][right] = viable_list[0]
-            update_one_pos(soduko, down, right, viable_list[0])
+        if check_viable_list(down, right, soduko, viable_list):
             return True
-        for pos in pos_list:
-            exclude_list.append(revert_val_for_pos(pos[0], pos[1], soduko))
-        exclude_list = two_dim_to_unique(exclude_list)
-        exclude_list = revert_list(exclude_list, soduko)
-        exclude_list = remove_exiting_objects(exclude_list, soduko.pos_val[e_val.Direction.Right][down])
-        if len(exclude_list) is 1:
-            #print("---------------------------")
-            #print(f"RIGTH: pos: {down}:{right}, n = {n}")
-            #print(f"excluded {exclude_list}")
-            #print("---------------------------")
-            soduko.S[down][right] = exclude_list[0]
-            update_one_pos(soduko, down, right, exclude_list[0])
+        if check_excluded_list(down, right, soduko, pos_list, viable_list, e_val.Direction.Right):
             return True
     return False
 
@@ -137,30 +117,10 @@ def try_right(soduko, down, right, n):
 def try_square(soduko, down, right, n):
     if len(soduko.S) - len(soduko.pos_val[e_val.Direction.Right][down]) <= n:
         pos_list = ll.get_empty_pos_square(soduko, down, right)
-        viable_list = []
-        exclude_list = []
         viable_list = get_values_for_pos(down, right, soduko)
-        viable_list = revert_list(viable_list, soduko)
-        if len(viable_list) is 1:
-            #print("---------------------------")
-            #print(f"SQUARE: pos: {down}:{right}, n = {n}")
-            #print(f"viable list {viable_list}")
-            #print("---------------------------")
-            soduko.S[down][right] = viable_list[0]
-            update_one_pos(soduko, down, right, viable_list[0])
+        if check_viable_list(down, right, soduko, viable_list):
             return True
-        for pos in pos_list:
-            exclude_list.append(revert_val_for_pos(pos[0], pos[1], soduko))
-        exclude_list = two_dim_to_unique(exclude_list)
-        exclude_list = revert_list(exclude_list, soduko)
-        exclude_list = remove_exiting_objects(exclude_list, soduko.pos_val[e_val.Direction.Square][down])
-        if len(exclude_list) is 1:
-            #print("---------------------------")
-            #print(f"SQUARE: pos: {down}:{right}, n = {n}")
-            #print(f"excluded {exclude_list}")
-            #print("---------------------------")
-            soduko.S[down][right] = exclude_list[0]
-            update_one_pos(soduko, down, right, exclude_list[0])
+        if check_excluded_list(down, right, soduko, pos_list, viable_list, e_val.Direction.Square):
             return True
     return False
 
@@ -181,13 +141,8 @@ def solve_soduko(soduko, n, pos):
     down = math.floor(pos / len(soduko.S))
     right = pos % len(soduko.S)
     limit_size = len(soduko.S) ** 2
-    
-    #print(f"pos = {pos}, n = {n}")
-    #if n == 3 and right == 0 and down == 1:
-    #    print("Start:")
-    #    s_func.Print(soduko)
-    #    print("End")
-    if n == 9 or pos > 81:
+
+    if n == len(soduko.S):
         return True
     if done(len(soduko.S), n, pos):
         # If n has reached the limit, and all positions have been gone through
@@ -218,6 +173,5 @@ soduko = SodukoClass.Soduko(txt_soduko)
 sys.setrecursionlimit(10000)
 first_run(soduko)
 second_run(soduko)
-#print(ll.get_empty_pos_square(soduko, 8, 8))
 s_func.Print(soduko)
 print("done")
