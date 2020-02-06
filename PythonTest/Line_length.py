@@ -2,6 +2,7 @@ import numpy as np
 from SodukoClass import Soduko
 from MakeTestSoduko import Soduko_func as s_func
 import OpenFile as of
+import enum_val
 
 def down_line_length(down, soduko):
     """Takes a row down"""
@@ -12,8 +13,18 @@ def down_line_length(down, soduko):
     return length
 
 def get_empty_pos_down(soduko, down, right):
-    result = down_line_length(down, soduko)
-    result.remove([down, right])
+    result = down_line_length(right, soduko)
+    if not [down, right] in result:
+        #print("-----------------------------------------")
+        print(result)
+        print(f"down {down} right {right} val {soduko.S[down][right]}")
+        #print(soduko.pos_val[enum_val.Direction.Down])
+        #print(soduko.pos_val[enum_val.Direction.Right])
+        #print(soduko.pos_val[enum_val.Direction.Square])
+        #print(soduko.S)
+        #print("-----------------------------------------")
+    else:
+        result.remove([down, right])
     return result
 
 def right_line_length(right, soduko):
@@ -32,10 +43,11 @@ def get_empty_pos_right(soduko, down, right):
 def square_line_length(right, down, pos, soduko):
     i = 0
     length = []
+    rel_pos = 0
     while i < soduko.squareSize:
-        right = pos[0] - right + i
-        if int(soduko.S[down][right]) == 0:
-            length.append([down, right])
+        rel_pos = pos[1] - right + i
+        if int(soduko.S[down][rel_pos]) == 0:
+            length.append([down, rel_pos])
         i += 1 
 
     return length
@@ -45,12 +57,19 @@ def square_length(rel_pos, pos, soduko):
     i = 0
     length = []
     while i < len(square):
-        down = pos[1] - rel_pos[1] + i
-        length.append(square_line_length(rel_pos[0], down, pos, soduko))
+        down = pos[0] - rel_pos[0] + i
+        length += square_line_length(rel_pos[1], down, pos, soduko)
         i += 1
     return length
 
+def get_rel_pos(down, right, soduko):
+    rel_pos = []
+    rel_pos.append(down % soduko.squareSize)
+    rel_pos.append(right % soduko.squareSize)
+    return rel_pos
+
 def get_empty_pos_square(soduko, down, right):
-    result = square_length([0,0], [down, right], soduko)
+    rel_pos = get_rel_pos(down, right, soduko)
+    result = square_length(rel_pos, [down, right], soduko)
     result.remove([down, right])
     return result

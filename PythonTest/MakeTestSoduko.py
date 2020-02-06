@@ -24,7 +24,10 @@ class Soduko_func(object):
         for r in S.S:
             print("| ", end = "")
             for n in r:
-                print(str(int(n)).zfill(S.number_size), end = " | ")
+                if int(n) is 0:
+                    print(" ", end = " | ")
+                else:
+                    print(str(int(n)).zfill(S.number_size), end = " | ")
             print(f"\n{bottom_line}")
 
     @staticmethod
