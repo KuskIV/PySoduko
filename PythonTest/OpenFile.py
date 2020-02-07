@@ -4,12 +4,10 @@ import math
 
 def arr_to_soduko(arr):
     line_size = int(math.sqrt(len(arr)))
-    square_size = int(math.sqrt(line_size))
     soduko = np.zeros((line_size, line_size))
-    print(line_size)
     for n in range(0, len(arr) - 1):
         if n != "":
-            soduko[math.floor(n / line_size)][n % line_size] = arr[n]
+            soduko[math.floor(n / line_size)][n % line_size] = arr[int(n)]
     return soduko
 
 

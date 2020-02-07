@@ -1,21 +1,26 @@
-import SodukoClass
-import Position as pos
-from MakeTestSoduko import Soduko_func as s_func
+from SodukoClass import Soduko
 import OpenFile as of
-import ThroughSoduko as ts
+import ThroughSoduko as solve
+import sys
+import time
+import get
+import check
+import exhaust
 
-posXY = (1,1)
-txt_soduko = of.return_soduko_from_file("sOne")
-soduko = SodukoClass.Soduko(txt_soduko)
-not_solved = True
-dead_end = False
-first_run = True
-soduko_edited = False
+sys.setrecursionlimit(10000)
+start_time = time.time()
 
-n = 1
+soduko = Soduko("soHard")
 
-if s_func.Is_verified(soduko.S):
-    #print("\033c")
-    ts.first_run(soduko)
-    ts.second_run(soduko,+ n)
-    s_func.Print(soduko)
+#soduko.Print(soduko)
+solve.Soduko(soduko)
+
+soduko.Print(soduko)
+
+if soduko.verify(soduko):
+    print("\nStatus           : SUCCESS!")
+    print("Completiong time : {0:.3f}  sec".format(time.time() - start_time))
+else:
+    print("\nStatus : FAILED")
+
+
