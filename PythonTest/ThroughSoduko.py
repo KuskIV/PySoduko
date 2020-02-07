@@ -1,5 +1,3 @@
-import Position as po
-import Line_values as lv
 import math
 import Line_length as ll
 import SodukoClass
@@ -10,6 +8,7 @@ import update_soduko as us
 import numpy as np
 from itertools import chain
 import sys
+import time
 
 
 def first_run(soduko):
@@ -17,14 +16,6 @@ def first_run(soduko):
     us.update_rigt_arr(soduko)
     us.update_down_arr(soduko)
     us.update_square_arr(soduko)
-
-
-
-def check_one(num_list, n, max_size, s_index):
-    for e in range(s_index, max_size):
-        if max_size - len(num_list[e]) == n:
-            return (num_list[e], e)
-    return None, 0
 
 def revert_list(input_list, soduko):
     result = []
@@ -43,9 +34,11 @@ def two_dim_to_unique(arr):
     return arr
 
 def get_square_number(down, right, squareSize):
-    down_val = math.ceil((down + 1) / squareSize)
-    right_val = math.ceil((right + 1) / squareSize)
-    return (3 * down_val - (3 - right_val)) - 1
+    down_val = math.floor((down) / squareSize)
+    right_val = math.floor((right) / squareSize)
+    td = (squareSize * (down_val + 1)) - 1
+    tr = squareSize - right_val - 1
+    return td - tr
 
 def get_values_for_pos(down, right, soduko):
     result = []
@@ -60,12 +53,32 @@ def revert_val_for_pos(down, right, soduko):
 
 
 def update_one_pos(soduko, down, right, new_val):
-    soduko.pos_val[e_val.Direction.Down][down].append(new_val) 
+    soduko.pos_val[e_val.Direction.Down][right].append(new_val) 
     soduko.pos_val[e_val.Direction.Right][down].append(new_val)
-    soduko.pos_val[e_val.Direction.Square][down].append(new_val)
+    soduko.pos_val[e_val.Direction.Square][get_square_number(down, right, soduko.squareSize)].append(new_val)
+
+def verify_part(key, soduko):
+    for l in soduko.pos_val[key]:
+        if not (len(l) == len(set(l))) or not len(l) is len(soduko.S):
+            return False
+    return True
+
+def verify_soduko(soduko):
+    if not verify_part(e_val.Direction.Down, soduko):
+        return False
+    elif not verify_part(e_val.Direction.Right, soduko):
+        return False
+    elif not verify_part(e_val.Direction.Square, soduko):
+        return False
+    else:
+        return True
 
 def check_viable_list(down, right, soduko, viable_list):
     viable_list = revert_list(viable_list, soduko)
+
+    #if down == 7 and right == 5:
+    #    test(down, right, soduko, viable_list, "VIABLE")
+
     if len(viable_list) is 1:
         soduko.S[down][right] = viable_list[0]
         update_one_pos(soduko, down, right, viable_list[0])
@@ -78,7 +91,7 @@ def check_excluded_list(down, right, soduko, pos_list, viable_list, dir):
         exclude_list.append(revert_val_for_pos(pos[0], pos[1], soduko))
     exclude_list = two_dim_to_unique(exclude_list)
     exclude_list = revert_list(exclude_list, soduko)
-    exclude_list = remove_exiting_objects(exclude_list, soduko.pos_val[dir][right])
+    exclude_list = remove_exiting_objects(exclude_list, revert_list(viable_list, soduko))
     if len(exclude_list) is 1:
         if exclude_list[0] in viable_list:
             soduko.S[down][right] = exclude_list[0]
@@ -143,11 +156,11 @@ def solve_soduko(soduko, n, pos):
     limit_size = len(soduko.S) ** 2
 
     if n == len(soduko.S):
-        return True
+        return soduko
     if done(len(soduko.S), n, pos):
         # If n has reached the limit, and all positions have been gone through
         # should be done, return true
-        return True
+        return soduko
     elif pos >= limit_size:
         # If all positions has been gone through for one n
         # cound n up and reset pos
@@ -163,15 +176,37 @@ def solve_soduko(soduko, n, pos):
         #If the number in pos is not 0, keep goint
         return solve_soduko(soduko, n, pos + 1)
 
+def soduko_filled(soduko):
+    for i in range(0, len(soduko.S) ** 2):
+        down = math.floor(i / len(soduko.S))
+        right = i % len(soduko.S)
+        if soduko.S[down][right] == 0:
+            return False
+    return True
 
 def second_run(soduko):
     return solve_soduko(soduko, 1, 0)
 
-txt_soduko = of.return_soduko_from_file("sOne")
+def print_val(soduko):
+    for i in range(0, len(soduko.S) ** 2):
+        down = math.floor(i / len(soduko.S))
+        right = i % len(soduko.S)
+        print(int(soduko.S[down][right]), end=" ")
+
+start_time = time.time()
+txt_soduko = of.return_soduko_from_file("soOne")
 soduko = SodukoClass.Soduko(txt_soduko)
+runs = 0
 
 sys.setrecursionlimit(10000)
 first_run(soduko)
+s_func.Print(soduko)
 second_run(soduko)
 s_func.Print(soduko)
-print("done")
+
+
+if verify_soduko(soduko):
+    print("\nStatus           : SUCCESS!")
+    print("Completiong time : {0:.3f}  sec".format(time.time() - start_time))
+else:
+    print("\nStatus : FAILED")

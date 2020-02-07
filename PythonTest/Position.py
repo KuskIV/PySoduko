@@ -5,7 +5,7 @@ import Line_values as lv
 import numpy as np
 from enum import Enum
 
-
+"""
 def FindIndexHandleZero(p, squareSize):
     return p % squareSize
 
@@ -53,3 +53,4 @@ def all_lengt_of_positions(posXY, soduko):
     length.append(ll.square_length(currentPos, posXY, soduko))
 
     return length
+    """

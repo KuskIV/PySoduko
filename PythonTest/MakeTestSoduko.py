@@ -41,17 +41,4 @@ class Soduko_func(object):
             for n in r:
                 print(int(n), end = " | ")
             print(f"\n{bottom_line}")
-
-    @staticmethod
-    def Is_verified(S):
-
-        if len(S) == 0:
-            print("The squaresize cannot be zero")
-            return False
-        elif len(S) > 25:
-            print("This soduko is way too big")
-            return False
-        else:
-            print("Soduko is accepted! It will now be solved, behold!")
-            return True
         
