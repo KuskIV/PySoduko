@@ -10,9 +10,9 @@ import exhaust
 sys.setrecursionlimit(10000)
 start_time = time.time()
 
-soduko = Soduko("soHard")
+soduko = Soduko("soOne")
 
-#soduko.Print(soduko)
+soduko.Print(soduko)
 solve.Soduko(soduko)
 
 soduko.Print(soduko)
