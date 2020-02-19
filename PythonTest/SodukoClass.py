@@ -57,4 +57,5 @@ class Soduko:
         self.number_size = len(str(len(self.S)))
         self.bottom_line = Soduko.make_line(self)
         self.pos_val = {}
+        self.excluded_dict = {}
 

@@ -9,6 +9,7 @@ import sys
 import time
 import solve
 import exhaust
+from CleverExhaust import exhaust
 
 
 def first_run(soduko):
@@ -16,6 +17,7 @@ def first_run(soduko):
     us.update_rigt_arr(soduko)
     us.update_down_arr(soduko)
     us.update_square_arr(soduko)
+
 
 def possible_matche(down, right, soduko):
     return soduko.S[down][right] == 0
@@ -64,7 +66,8 @@ def second_run(soduko):
 def Soduko(soduko):
     first_run(soduko)
     second_run(soduko)
-    if not soduko.verify(soduko):
-        print("Engage exhaust. State:")
-        soduko.Print(soduko)
-        exhaust.Soduko(soduko)
+    #if not soduko.verify(soduko):
+    #    print("Engage exhaust. State:")
+    #    soduko.Print(soduko)
+    #    exhaust(soduko)
+    #    exhaust.Soduko(soduko)
